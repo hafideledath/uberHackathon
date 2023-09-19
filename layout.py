@@ -8,37 +8,37 @@ import heapq
 G = nx.Graph()
 
 # Define different locations and their types
-locations = {
-    'Skyscraper': 10,
-    'Mall pt': 8,
-    'Strip \nMall': 6,
-    'Grocery \nStore pt': 5,
-    'Cinema': 7,
-    'Park': 4,
-    'Stadium': 8,
-    'Apartment \nBuilding': 9,
-    'Villa': 8,
-    'Tourist \nAttraction pt': 7,
-    'School pt': 6,
-    'Restaurant': 6,
-    'Bank': 5,
-    'Library pt': 4,
-    'Cafe': 6,
-    'Office': 7,
-    'Hospital pt': 8,
-    'Alex\'s \nHotpot': 7,
-    'Gym': 6,
-    'Gas \nStation': 5,
-    'Airport pt': 8,
-    'Train \nStation': 7,
-    'Pharmacy': 6,
-    'Theater': 6,
-    'Post \nOffice pt': 5,
-    'Hotel': 7,
-    'Beach pt': 8,
-    'Zoo': 6,
-    'Art \nGallery': 7,
-}
+locations = [
+    'Skyscraper',
+    'Mall pt',
+    'Strip \nMall',
+    'Grocery \nStore pt',
+    'Cinema',
+    'Park',
+    'Stadium',
+    'Apartment \nBuilding',
+    'Villa',
+    'Tourist \nAttraction pt',
+    'School pt',
+    'Restaurant',
+    'Bank',
+    'Library pt',
+    'Cafe',
+    'Office',
+    'Hospital pt',
+    'Alex\'s \nHotpot',
+    'Gym',
+    'Gas \nStation',
+    'Airport pt',
+    'Train \nStation',
+    'Pharmacy',
+    'Theater',
+    'Post \nOffice pt',
+    'Hotel',
+    'Beach pt',
+    'Zoo',
+    'Art \nGallery'
+]
 
 # Define fixed positions for each location
 positions = {
@@ -74,9 +74,9 @@ positions = {
 }
 
 # Add nodes (locations) to the graph with fixed positions
-for location, popularity in locations.items():
+for location in locations:
     x, y = positions[location]
-    G.add_node(location, pos=(x, y), popularity=popularity)
+    G.add_node(location, pos=(x, y))
 
 # Define fixed connections between locations (edges) with fixed weights
 connections = [
@@ -155,6 +155,8 @@ def get_layout():
     return st.pyplot(plt)
 
 def get_shortest_path(graph, node1, node2):
+    if node1 == node2:
+        return False
     # priority queue. |
                     # v
     Alex_good = [(0, [node1])]
@@ -190,3 +192,19 @@ for node1, node2, distance in connections:
         graph[node2] = []
     graph[node1].append((node2, distance))
     graph[node2].append((node1, distance))
+
+def get_branch_distance(a, b):
+    for connection in connections:
+        if a in connection and b in connection:
+            return connection[2]
+
+def get_route_distance(path):
+    sum = 0
+    for i in range(len(path) - 1):
+        n1, n2 = path[i:i+2]
+        sum += get_branch_distance(n1, n2)
+    return sum
+
+## general carbon emissions for a merecedez bens 2018 is 120grams/km
+## for carbon emissions mutliply distance by 120
+## for price mui

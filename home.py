@@ -7,7 +7,7 @@ def main():
 
     options = [
         'Choose a location',
-        *locations.keys()
+        *locations
     ]
 
     def request_ride(a, b):
@@ -47,9 +47,6 @@ def main():
         shortest_path = get_shortest_path(graph, st.session_state.location, st.session_state.destination)
         st.session_state.shortest_route = " -> ".join(shortest_path)
         st.session_state.button_click = True
-        x = st.session_state.destination
-        y = options.x
-        print(y)
 
     st.button("Request a Ride", on_click=wait)
 
