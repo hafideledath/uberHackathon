@@ -1,6 +1,7 @@
 import streamlit as st
 import networkx as nx
 import matplotlib.pyplot as plt
+from enum import Enum
 
 import heapq
 
@@ -72,6 +73,15 @@ positions = {
     'Zoo': (18, 15),
     'Art \nGallery': (18, 12),
 }
+
+
+class Ride_options(Enum):
+    UBERX = 333         # Model of the car: Audi RS6 2007
+    UBER_GREEN = 0      # Model of the car: BMW Xi 2007  
+    UBERX_SHARE = 333   # Model of the car: Audi RS6 2007
+    UBERXL = 383        # Model of the car: Cadillac Escalade 2007
+    UBER_COMFORT = 250  # Model of the car: Masearti Quattroporte 2018
+
 
 # Add nodes (locations) to the graph with fixed positions
 for location in locations:
@@ -155,8 +165,6 @@ def get_layout():
     return st.pyplot(plt)
 
 def get_shortest_path(graph, node1, node2):
-    if node1 == node2:
-        return False
     # priority queue. |
                     # v
     Alex_good = [(0, [node1])]
@@ -193,18 +201,35 @@ for node1, node2, distance in connections:
     graph[node1].append((node2, distance))
     graph[node2].append((node1, distance))
 
+def get_branch_impact(a, b, impact=1):
+    for connection in connections:
+        if a in connection and b in connection:
+            if not b.endswith(" pt"):
+                return connection[2] * impact
+            return connection[2] * 35
+
+def get_route_impact(a, b):
+    path = get_shortest_path(graph, a, b)
+    sum = 0
+    
+    for i in range(len(path) - 1):
+        n1, n2 = path[i:i+2]
+        sum += get_branch_impact(n1, n2)
+    return sum
+
+
 def get_branch_distance(a, b):
     for connection in connections:
         if a in connection and b in connection:
             return connection[2]
 
-def get_route_distance(path):
+def get_route_distance(a, b):
+    path = get_shortest_path(graph, a, b)
     sum = 0
     for i in range(len(path) - 1):
         n1, n2 = path[i:i+2]
         sum += get_branch_distance(n1, n2)
     return sum
-
-## general carbon emissions for a merecedez bens 2018 is 120grams/km
-## for carbon emissions mutliply distance by 120
-## for price mui
+# general carbon emissions for a merecedez bens 2018 is 120grams/km
+# for carbon emissions mutliply distance by 120
+# for price mui
