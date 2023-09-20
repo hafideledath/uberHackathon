@@ -49,6 +49,7 @@ The code requires the following libraries to be installed using pip install [lib
 
 - Streamlit
 - networkx
+- matplotlib
 - Streamlit components v1
 
 ## How to run the code
