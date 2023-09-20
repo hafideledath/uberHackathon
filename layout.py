@@ -158,9 +158,18 @@ def get_layout():
     node_labels = {n: n for n, data in G.nodes(data=True)}
     plt.figure(figsize=(15, 15))
     # Draw the graph without labels.
-    nx.draw(G, pos, with_labels=False, node_size=5000, node_color='black', font_size=10)
+    nx.draw(
+        G, pos, with_labels=False,
+        node_size=5000,
+        node_color='black',
+        font_size=10
+        )
     # Draw the node labels.
-    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10, font_color='white', verticalalignment='center')
+    nx.draw_networkx_labels(
+        G, pos, labels=node_labels, 
+        font_size=10, font_color='white', 
+        verticalalignment='center'
+        )
     # Draw the edge labels.
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=8)
     plt.axis('off')
@@ -205,15 +214,15 @@ for node1, node2, distance in connections:
     graph[node1].append((node2, distance))
     graph[node2].append((node1, distance))
 
-def get_branch_impact(a, b, impact):
-    for connection in connections:
+def get_branch_impact(a, b, impact): #getting carbon emissions for distance                                
+    for connection in connections:   #travelled between two nodes and adding it to sum variable in get_route_impact
         if a in connection and b in connection:
             if not b.endswith(" pt"):
                 return connection[2] * impact
             return connection[2] * 35
 
-def get_route_impact(a, b):
-    path = get_shortest_path(graph, a, b)
+def get_route_impact(a, b):               # taking the destination and location, then finding the total carbon emissions
+    path = get_shortest_path(graph, a, b) # for each car model used and appending each value to an array
     sumlist = []
     for model in Ride_options: 
         sum = 0   
