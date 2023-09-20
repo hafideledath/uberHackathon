@@ -75,11 +75,11 @@ positions = {
 
 
 Ride_options = [
-    ("UberX", 333),         # Model of the car: Audi RS6 2007
     ("Uber_Green",  0),     # Model of the car: BMW Xi 2007  
-    ("UberX_Green", 333),   # Model of the car: Audi RS6 2007
+    ("UberX_Share", 333),   # Model of the car: Audi RS6 2007
     ("UberXL", 383),        # Model of the car: Cadillac Escalade 2007
-    ("Uber_Comfort",  250)  # Model of the car: Masearti Quattroporte 2018
+    ("Uber_Comfort",  250), # Model of the car: Masearti Quattroporte 2018
+    ("Uber_WAV",  441)      # Model of the car: Toyota Sienna 2018 
 ]
 
 

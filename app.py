@@ -7,7 +7,6 @@ import streamlit.components.v1 as components
 
 if 'model_response' not in st.session_state:
         st.session_state.model_response = ''
-option_chosen = ""
 
 def ride():
     if st.session_state.model == "Choose a model": 
@@ -44,9 +43,9 @@ def route_impact_model():
 
 if (st.session_state.button_click1):
     route()
-    Dog=[]
+    Ride_options_only=[]
     for i in range(len(Ride_options)):
-        Dog.append(Ride_options[i][0])
+        Ride_options_only.append(Ride_options[i][0])
         
     st.write(f"Shortest route: {st.session_state.shortest_route}")
 
@@ -55,7 +54,7 @@ if (st.session_state.button_click1):
       components.html(
         f"""
             <div style="background-color: #fff; font-family: sans-serif; padding: 10px 20px; border-radius: 5px; height: 100%; margin: 0;">
-              <h1>{Dog[impact].replace("_", " ")}</h1>
+              <h1>{Ride_options_only[impact].replace("_", " ")}</h1>
               <div style="opacity: 0.8; line-height: 0.4;">
                   <p>{st.session_state.route_impact[impact]}g of Carbon emissions</p>
                   <p>{st.session_state.route_distance} kilometers for your journey</p>
@@ -63,22 +62,22 @@ if (st.session_state.button_click1):
               </div>
             </div>
         """, height=212)
-    st.selectbox('Choose a model', Dog, on_change=ride, key='model')
+    Ride_options_only.insert(0, "Choose a model")
+    st.selectbox(' ', Ride_options_only, key='model')
+    st.button("Book ride!", on_click=ride)
 elif(st.session_state.button_click2):
     final()
     
-    def reset():
-      st.experimental_rerun()
-    
     components.html(
         f"""
-            <div style="background-color: #90EE90;">
-              <h2>{st.session_state.model_response}</h2>
-              <p>{st.session_state.route_impact[route_impact_model()]}g of Carbon emissions</p>
-              <p>{st.session_state.route_distance} kilometers for your journey</p>
-              <p>The price for your journey: {st.session_state.route_distance * 0.5}$</p>
+            <div style="background-color: #fff; font-family: sans-serif; padding: 10px 20px; border-radius: 5px; height: 100%; margin: 0;">
+              <h1>{st.session_state.model_response.replace("_", " ")}</h1>
+              <div style="opacity: 0.8; line-height: 0.4;">
+                  <p>{st.session_state.route_impact[route_impact_model()]}g of Carbon emissions</p>
+                  <p>{st.session_state.route_distance} kilometers for your journey</p>
+                  <p>The price for your journey: {st.session_state.route_distance * 0.5}$</p>
+              </div>
             </div>
-        """)
-    st.button("Re-request a ride!", on_click=reset)
+        """, height=212)
 else: 
     home()

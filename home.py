@@ -1,5 +1,5 @@
 import streamlit as st
-from layout import get_layout, get_shortest_path, graph, locations, get_route_impact, get_route_distance, Ride_options
+from layout import get_layout, get_shortest_path, graph, locations, get_route_impact, get_route_distance
 
 def main():
     get_layout()
@@ -8,10 +8,6 @@ def main():
         'Choose a location',
         *locations
     ]
-
-    def request_ride(a, b):
-        shortest_path = get_shortest_path(graph, a, b)
-        st.write(shortest_path)
 
     if 'location_response' not in st.session_state:
         st.session_state.location_response = ''
@@ -23,8 +19,6 @@ def main():
             st.session_state.location_response = f'You selected: {st.session_state.location}'
 
     st.selectbox('Where would you like to be picked up?', options, on_change=location, key='location')
-
-
 
     st.empty()
     st.write(st.session_state.location_response)
