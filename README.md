@@ -126,6 +126,6 @@ def get_route_distance(a, b):
 
 # Common error noticed
 
-map dosent always load at first run
+The fictional map for Uber Land does not always load at the first run
 
-- reload page once or twice and the map will appear.
+- reload the page once or twice and the map will appear/load.
