@@ -152,7 +152,7 @@ for connection in connections:
 
 # Draw the graph
 def get_layout():
-    # Creates a layout for a city map.
+    """Creates a layout for a city map."""
     pos = nx.get_node_attributes(G, 'pos')
     edge_labels = nx.get_edge_attributes(G, 'weight')
     node_labels = {n: n for n, data in G.nodes(data=True)}
@@ -183,12 +183,12 @@ def get_shortest_path(graph, node1, node2):
         if last_node == node2:
             return now
 
-        # check if the last node had been visited 
+        # check if the last node has been visited 
         if last_node not in visited:
             visited.add(last_node)
             for nextone, dis in graph[last_node]:
 
-                # see if neighbur node had beenvisited
+                # see if neighbur node has been visited
                 if nextone not in visited:
                     new = distance + dis
                     path = now + [nextone]
@@ -225,21 +225,18 @@ def get_route_impact(a, b):
 
 
 def get_branch_distance(a, b):
-    # Get the distance/weight between location A and location B 
-    # returns the distance/weight
+    """Get the distance/weight between location A and location B 
+    Returns the distance/weight"""
     for connection in connections:
         if a in connection and b in connection:
             return connection[2]
 
 def get_route_distance(a, b):
-    # Get the distance/weight between location A and location B 
-    # Return the totle sum of distance/weight 
+    """Get the distance/weight between location A and location B 
+    Returns the total sum of distance/weight"""
     path = get_shortest_path(graph, a, b)
     sum = 0
     for i in range(len(path) - 1):
         n1, n2 = path[i:i+2]
         sum += get_branch_distance(n1, n2)
     return sum
-# general carbon emissions for a merecedez bens 2018 is 120grams/km
-# for carbon emissions mutliply distance by 120
-# for price mui
