@@ -49,7 +49,7 @@ def main():
         st.session_state.shortest_route = " -> ".join(shortest_path)
         st.session_state.route_impact = get_route_impact(st.session_state.location, st.session_state.destination)
         st.session_state.route_distance = get_route_distance(st.session_state.location, st.session_state.destination)
-        st.session_state.button_click = True
+        st.session_state.button_click1 = True
 
     st.button("Request a Ride", on_click=wait)
 

@@ -1,7 +1,6 @@
 import streamlit as st
 import networkx as nx
 import matplotlib.pyplot as plt
-from enum import Enum
 
 import heapq
 
@@ -75,12 +74,13 @@ positions = {
 }
 
 
-class Ride_options(Enum):
-    UBERX = 333         # Model of the car: Audi RS6 2007
-    UBER_GREEN = 0      # Model of the car: BMW Xi 2007  
-    UBERX_SHARE = 333   # Model of the car: Audi RS6 2007
-    UBERXL = 383        # Model of the car: Cadillac Escalade 2007
-    UBER_COMFORT = 250  # Model of the car: Masearti Quattroporte 2018
+Ride_options = [
+    ("UberX", 333),         # Model of the car: Audi RS6 2007
+    ("Uber_Green",  0),     # Model of the car: BMW Xi 2007  
+    ("UberX_Green", 333),   # Model of the car: Audi RS6 2007
+    ("UberXL", 383),        # Model of the car: Cadillac Escalade 2007
+    ("Uber_Comfort",  250)  # Model of the car: Masearti Quattroporte 2018
+]
 
 
 # Add nodes (locations) to the graph with fixed positions
@@ -88,7 +88,8 @@ for location in locations:
     x, y = positions[location]
     G.add_node(location, pos=(x, y))
 
-# Define fixed connections between locations (edges) with fixed weights
+# Define fixed connections between locations (edges) with fixed weights 
+# The format of the connection is (location A, Location B, weight/distance)
 connections = [
     ('Skyscraper', 'Mall pt', 3),
     ('Bank', 'Mall pt', 3),
@@ -150,19 +151,22 @@ for connection in connections:
     G.add_edge(connection[0], connection[1], weight=f"{connection[2]}km")
 
 # Draw the graph
-pos = nx.get_node_attributes(G, 'pos')
-edge_labels = nx.get_edge_attributes(G, 'weight')
-node_labels = {n: n for n, data in G.nodes(data=True)}
-plt.figure(figsize=(15, 15))
-nx.draw(G, pos, with_labels=False, node_size=5000, node_color='black', font_size=10)
-nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10, font_color='white', verticalalignment='center')
-nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=8)
-
-plt.axis('off')
-plt.title("City Map of UberLand's layout")
-
 def get_layout():
-    return st.pyplot(plt)
+    # Creates a layout for a city map.
+    pos = nx.get_node_attributes(G, 'pos')
+    edge_labels = nx.get_edge_attributes(G, 'weight')
+    node_labels = {n: n for n, data in G.nodes(data=True)}
+    plt.figure(figsize=(15, 15))
+    # Draw the graph without labels.
+    nx.draw(G, pos, with_labels=False, node_size=5000, node_color='black', font_size=10)
+    # Draw the node labels.
+    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10, font_color='white', verticalalignment='center')
+    # Draw the edge labels.
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=8)
+    plt.axis('off')
+    plt.title("City Map of UberLand's layout")
+    st.pyplot(plt)
+
 
 def get_shortest_path(graph, node1, node2):
     # priority queue. |
@@ -201,7 +205,7 @@ for node1, node2, distance in connections:
     graph[node1].append((node2, distance))
     graph[node2].append((node1, distance))
 
-def get_branch_impact(a, b, impact=1):
+def get_branch_impact(a, b, impact):
     for connection in connections:
         if a in connection and b in connection:
             if not b.endswith(" pt"):
@@ -210,20 +214,26 @@ def get_branch_impact(a, b, impact=1):
 
 def get_route_impact(a, b):
     path = get_shortest_path(graph, a, b)
-    sum = 0
-    
-    for i in range(len(path) - 1):
-        n1, n2 = path[i:i+2]
-        sum += get_branch_impact(n1, n2)
-    return sum
+    sumlist = []
+    for model in Ride_options: 
+        sum = 0   
+        for i in range(len(path) - 1):
+            n1, n2 = path[i:i+2]
+            sum += get_branch_impact(n1, n2, model[1])
+        sumlist.append(sum)
+    return sumlist
 
 
 def get_branch_distance(a, b):
+    # Get the distance/weight between location A and location B 
+    # returns the distance/weight
     for connection in connections:
         if a in connection and b in connection:
             return connection[2]
 
 def get_route_distance(a, b):
+    # Get the distance/weight between location A and location B 
+    # Return the totle sum of distance/weight 
     path = get_shortest_path(graph, a, b)
     sum = 0
     for i in range(len(path) - 1):
