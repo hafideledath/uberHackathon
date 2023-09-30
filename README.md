@@ -1,37 +1,4 @@
-<style>
-    @keyframes background-pan {
-      from {
-        background-position: 0% center;
-      }
-    
-      to {
-        background-position: -200% center;
-      }
-    }
-
-    h1 {
-        font-weight: 400;
-        letter-spacing: .5px
-    }
-
-    .project-name {
-        background: linear-gradient(
-            to right,
-            #bda2fc,
-            #c989f4,
-            #9489f4,
-            #bda2fc
-        );
-        animation: background-pan 3s linear infinite;
-        background-size: 200%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-right: 5px;
-        font-weight: 700;
-    }
-</style>
-
-<h1><span class="project-name">Public + Private</span> Overview</h1>
+<h1>Public + Private Overview</h1>
 
 ## Introduction
 
@@ -39,13 +6,13 @@ This code is a Python script that uses the Streamlit library to create a Public 
 
 <hr>
 
- The app allows users to choose amongst different uber ride options. 
- It calculates the shortest route and carbon emissions for the journey. 
- The app also provides an estimated price for the journey.
+The app allows users to choose amongst different uber ride options.
+It calculates the shortest route and carbon emissions for the journey.
+The app also provides an estimated price for the journey.
 
 ## Dependencies
 
-The code requires the following libraries to be installed using pip install [library_name]: 
+The code requires the following libraries to be installed using pip install [library_name]:
 
 - Streamlit
 - networkx
@@ -78,12 +45,12 @@ If neither variable is True, the `home()` function is called to display the home
 At the start of the code both button clicks are set to **False**, therefore the home page is run.
 
 Refer to line 52 for explanation of home.py
-At the end of home.py a "Request to ride" button is clicked. 
+At the end of home.py a "Request to ride" button is clicked.
 
 This click is stored in the sesion variable `st.session_state.button_click1` and is set to `True`.
 Since this variable is now set to true the if statement mentioned previously is now run. On running, the first if statement value returns true and therefore runs the function "`route`".
 
-The page route.py dosent neccesarily have any meaningful code in it except for a `st.write `statement giving a title for the page. 
+The page route.py dosent neccesarily have any meaningful code in it except for a `st.write `statement giving a title for the page.
 
 On app.py we display multiple variables:
 
@@ -96,9 +63,10 @@ On app.py we display multiple variables:
 <hr>
 
 on the click of the button a `ride` function is called:
+
 - the `ride` function checks for the model the user has chosen and saves that into a `st.session_state.model_reponse` variable which is used to render the details for the users journey on the final page.
-T hen the function sets the first button click(used to render route) and sets st.`session_state.button_click2` to True.
-After this the function "final" is run.
+  T hen the function sets the first button click(used to render route) and sets st.`session_state.button_click2` to True.
+  After this the function "final" is run.
 
 - The route.py page has only a `st.write `statement that displays the title "Your ride details:"
 - below the app.py page renders a styled html component that displays the users final ride model, journey carbon emissions, price and distance.
@@ -146,7 +114,7 @@ In addition to constant variables, a variety of useful helper functions are defi
 
 ```py
 def get_route_distance(a, b):
-    """Get the distance/weight between location A and location B 
+    """Get the distance/weight between location A and location B
     Returns the total sum of distance/weight"""
     path = get_shortest_path(graph, a, b)
     sum = 0
