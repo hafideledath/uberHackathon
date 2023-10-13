@@ -1,7 +1,16 @@
 import streamlit as st
 from layout import get_layout, get_shortest_path, graph, locations, get_route_impact, get_route_distance
+import streamlit.components.v1 as components
 
 def main():
+    components.html(f"""<div>
+                            <nav style="color: #fff; display: flex; align-items: center; font-family: sans-serif; font-size: 1.5em; width: 100%; justify-content: space-between;">
+                                <h4>UberLand P+P</h4>
+                                <p>{st.session_state.total_points} points</p>
+                            </nav>
+                        </div>
+                    """)
+
     get_layout()
 
     options = [

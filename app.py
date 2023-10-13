@@ -5,26 +5,33 @@ from route import main as route
 from login import main as login
 from layout import connections, Ride_options
 import streamlit.components.v1 as components
-import sqlite3
+
 def main():
     if 'ride_history' not in st.session_state:
         st.session_state.ride_history = []
 
     total_carbon_emissions = 0
     total_distance = 0
+    total_points = 0
+    total_saved_emissions = 0
+    
     
     for entry in st.session_state.ride_history:
         carbon_emissions = entry["carbon_emissions"]
         distance = entry["distance"]
+        saved_em = entry["saved"]
+        total_saved_emissions += entry['saved']
+        total_points += round(saved_em / 20 + 20)
         total_carbon_emissions += carbon_emissions
         total_distance += distance
+        st.session_state.total_points = total_points
 
     Ride_options_only=[]
     for i in range(len(Ride_options)):
         Ride_options_only.append(Ride_options[i][0])
             
     def route_price(distance, model):
-        match model:
+        match model.replace(" ", "_"):
             case "Uber_Green":
                 return distance * 1
             case "UberX_Share":
@@ -54,6 +61,7 @@ def main():
     def ride():
         if st.session_state.model == "Choose a model": 
             st.session_state.model_response = ""
+            print(st.session_state.chosen_points)
         else:
             st.session_state.model_response = st.session_state.model
             st.session_state.button_click1 = False
@@ -67,7 +75,9 @@ def main():
     
     if 'button_click3' not in st.session_state:
         st.session_state.button_click3 = True
-        
+    if 'total_points' not in st.session_state:
+        st.session_state.total_points = 0
+    
     if 'shortest_route' not in st.session_state:
         st.session_state.shortest_route = ""
 
@@ -80,7 +90,7 @@ def main():
         
     def route_impact_model():
         for i in range(len(Ride_options)):
-            if Ride_options[i][0] == st.session_state.model_response:
+            if Ride_options[i][0].replace("_", " ") == st.session_state.model_response:
                 return i
     
 
@@ -103,9 +113,13 @@ def main():
                     </div>
                 """, height=212)
         Ride_options_only.insert(0, "Choose a model")
-        st.selectbox(' ', Ride_options_only, key='model')
+        st.selectbox(' ', [Ride_option.replace("_", " ") for Ride_option in Ride_options_only], key='model')
+        
+        st.number_input(key="chosen_points", min_value=0, max_value=st.session_state.total_points, label="How many points would you like to use?")
+        
         st.button("Book ride!", on_click=ride)
     elif(st.session_state.button_click2):
+        saved_emissions = st.session_state.route_impact[4] - st.session_state.route_impact[route_impact_model()]
         final()
 
         st.session_state.ride_history.append({
@@ -114,7 +128,8 @@ def main():
             'carbon_emissions': st.session_state.route_impact[route_impact_model()],
             'distance': st.session_state.route_distance,
             'price': route_price(st.session_state.route_distance, st.session_state.model_response),
-            'model': st.session_state.model_response.replace("_", " ")
+            'model': st.session_state.model_response.replace("_", " "),
+            'saved': saved_emissions
         })      
 
         components.html(
@@ -125,9 +140,10 @@ def main():
                     <p>{st.session_state.route_impact[route_impact_model()]}g of Carbon emissions</p>
                     <p>{st.session_state.route_distance} kilometers for your journey</p>
                     <p>The price for your journey: {route_price(st.session_state.route_distance, st.session_state.model_response)}$</p>
+                    <p>Saved emissions: {saved_emissions}g</p>
                 </div>
                 </div>
-            """, height=212)
+            """, height=232)
         st.button("Back to Home", on_click=back_home)
     elif(st.session_state.button_click3):
         login()
@@ -140,9 +156,10 @@ def main():
                 <div style="opacity: 0.8; line-height: 0.4;">
                     <p>{total_carbon_emissions}g total Carbon emissions</p>
                     <p>{total_distance}km total distance</p>
+                    <p>{total_saved_emissions}g of carbon emissions are saved </p>
                 </div>
             </div>
-        """, height=90)
+        """, height=110)
         st.write('''# Your Ride History:''')
         if st.session_state.ride_history:   
             for item in st.session_state.ride_history:
@@ -155,9 +172,10 @@ def main():
                             <p>{item['carbon_emissions']}g of Carbon emissions</p>
                             <p>{item['distance']} kilometers for your journey</p>
                             <p>The price for your journey: {item['price']}$</p>
+                            <p>Saved emissions: {item['saved']}g </p>
                         </div>
                     </div>
-                """, height=242)
+                """, height=262)
         else:
             st.write("You have not ridden anywhere yet")
        
