@@ -13,27 +13,21 @@ def main():
     if 'saved_price' not in st.session_state:
         st.session_state.saved_price = 0
 
-    if 'total_points' not in st.session_state:
-        st.session_state.total_points = 0
-
-    if 'saved_em' not in st.session_state:
-        st.session_state.saved_em = 0
-
     total_carbon_emissions = 0
     total_distance = 0
     total_points = 0
     total_saved_emissions = 0
     
+    
     for entry in st.session_state.ride_history:
         carbon_emissions = entry["carbon_emissions"]
         distance = entry["distance"]
-        st.session_state.saved_em = entry["saved"]
-        print(st.session_state.saved_em)
+        saved_em = entry["saved"]
         total_saved_emissions += entry['saved']
-        # total_points += round(saved_em / 20 + 20)
+        total_points += round(saved_em / 20 + 20)
         total_carbon_emissions += carbon_emissions
         total_distance += distance
-        # st.session_state.total_points = total_points
+        st.session_state.total_points = total_points
 
     Ride_options_only=[]
     for i in range(len(Ride_options)):
@@ -75,18 +69,8 @@ def main():
             st.session_state.button_click1 = False
             st.session_state.button_click2 = True
 
-        st.session_state.saved_em = st.session_state.route_impact[4] - st.session_state.route_impact[route_impact_model()]
-        # Route price minus saved amount if greater or equal to 0 else route price
-        current_route_price = route_price(st.session_state.route_distance, st.session_state.model_response)
-        points = current_route_price - st.session_state.saved_price if current_route_price - st.session_state.saved_price >= 0 else current_route_price
-        points *= 40
-        points = points if points <= st.session_state.total_points else st.session_state.total_points
-        print("POINTS:", points)
-        st.session_state.total_points += round(st.session_state.saved_em / 20) + 20
-        print("SAVED EMISSIONS:", st.session_state.saved_em)
-        print("TOTAL_POINTS 1:", st.session_state.total_points)
-        st.session_state.total_points -= points
-        print("TOTAL_POINTS 2:", st.session_state.total_points)
+        price = max(0, route_price(st.session_state.route_distance, st.session_state.model_response) - st.session_state.saved_price)
+        st.session_state.total_points -= round(saved_em / 20 + 20)
             
     if 'button_click1' not in st.session_state:
         st.session_state.button_click1 = False
@@ -96,6 +80,8 @@ def main():
     
     if 'button_click3' not in st.session_state:
         st.session_state.button_click3 = True
+    if 'total_points' not in st.session_state:
+        st.session_state.total_points = 0
     
     if 'shortest_route' not in st.session_state:
         st.session_state.shortest_route = ""
@@ -134,13 +120,13 @@ def main():
         Ride_options_only.insert(0, "Choose a model")
         st.selectbox(' ', [Ride_option.replace("_", " ") for Ride_option in Ride_options_only], key='model')
         
-        st.number_input(key="chosen_points", min_value=0, max_value=int(st.session_state.total_points), label="How many points would you like to use?")
+        st.number_input(key="chosen_points", min_value=0, max_value=st.session_state.total_points, label="How many points would you like to use?")
 
         st.session_state.saved_price = st.session_state.chosen_points / 40
+        
         st.button("Book ride!", on_click=ride)
     elif(st.session_state.button_click2):
         saved_emissions = st.session_state.route_impact[4] - st.session_state.route_impact[route_impact_model()]
-        st.session_state.saved_emissions = saved_emissions
         final()
 
         st.session_state.ride_history.append({

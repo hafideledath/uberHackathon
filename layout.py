@@ -153,6 +153,7 @@ for connection in connections:
 # Draw the graph
 def get_layout():
     """Creates a layout for a city map."""
+    im = plt.imread("background.jpg")
     pos = nx.get_node_attributes(G, 'pos')
     edge_labels = nx.get_edge_attributes(G, 'weight')
     node_labels = {n: n for n, data in G.nodes(data=True)}
